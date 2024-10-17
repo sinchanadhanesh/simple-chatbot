@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        #chatbot-container {
+            width: 300px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #chatbox {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #chatlog {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #userInput {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbot-container">
+        <div id="chatbox">
+            <div id="chatlog"></div>
+        </div>
+        <input type="text" id="userInput" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value;
+
+            // Display the user's message in the chat log
+            const chatlog = document.getElementById("chatlog");
+            const userMessage = document.createElement("div");
+            userMessage.textContent = "You: " + userInput;
+            chatlog.appendChild(userMessage);
+
+            // Send a request to the server
+            const response = await fetch('/message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userInput })
+            });
+
+            const data = await response.json();
+
+            // Display the bot's response in the chat log
+            const botMessage = document.createElement("div");
+            botMessage.textContent = "Bot: " + data.response;
+            chatlog.appendChild(botMessage);
+
+            // Clear the input field
+            document.getElementById("userInput").value = "";
+
+            // Scroll to the bottom of the chat log
+            chatlog.scrollTop = chatlog.scrollHeight;
+        }
+    </script>
+</body>
+</html>
